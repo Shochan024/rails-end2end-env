@@ -1,0 +1,5 @@
+#!/bin/bash
+
+RAILS_ENV=$1
+APP_PATH=/var/apps/{{APPNAME}}/current
+/bin/su - {{APPNAME}} -c "cd $APP_PATH; RAILS_ENV=$1 BUNDLE_GEMFILE=$APP_PATH/Gemfile bundle exec unicorn -c ./config/unicorn/${RAILS_ENV}.rb -E ${RAILS_ENV} -D"

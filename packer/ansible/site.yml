@@ -1,0 +1,5 @@
+---
+- name: Setup zeroney api environment
+  hosts: all
+  roles:
+    - common

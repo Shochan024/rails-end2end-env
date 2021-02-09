@@ -1,0 +1,26 @@
+---
+- name: Create swap directory
+  become: true
+  file: path=/var/swap state=directory
+
+- name: Create swap files
+  become: true
+  command: dd if=/dev/zero of=/var/swap/swap0 bs=1M count=2048
+
+- name: Set permission
+  become: true
+  file: path=/var/swap/swap0 owner=root group=root mode=0600
+
+- name: Make swap
+  become: true
+  command: mkswap /var/swap/swap0
+
+- name: Allocate swap
+  become: true
+  command: swapon /var/swap/swap0
+
+- name: Allocate swap automatically on boot
+  become: true
+  lineinfile:
+    path: /etc/fstab
+    line: '/var/swap/swap0 swap swap defaults 0 0'

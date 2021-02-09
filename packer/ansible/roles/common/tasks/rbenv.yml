@@ -1,0 +1,68 @@
+---
+- name: "{{ rbenv_root }}"
+  become: true
+  git:
+    repo: https://github.com/rbenv/rbenv
+    dest: "{{ rbenv_root }}"
+    depth: 1
+
+- name: "{{ rbenv_root }}/plugins/ruby-build"
+  become: true
+  git:
+    repo: https://github.com/rbenv/ruby-build
+    dest: "{{ rbenv_root }}/plugins/ruby-build"
+    depth: 1
+
+- name: "/etc/profile.d/rbenv.sh"
+  become: true
+  template:
+    src: rbenv.sh
+    dest: /etc/profile.d/rbenv.sh
+    owner: root
+    group: root
+    mode: 0644
+
+- name: "rbenv install {{ rbenv_ruby_version }}"
+  become: true
+  args:
+    creates: "{{ rbenv_root }}/versions/{{ rbenv_ruby_version }}/bin/ruby"
+  shell:
+    . /etc/profile.d/rbenv.sh &&
+    export CONFIGURE_OPTS="--disable-install-doc" &&
+    rbenv install {{ rbenv_ruby_version }} &&
+    rbenv global {{ rbenv_ruby_version }}
+
+- name: "make {{ rbenv_user }} rbenv accessible"
+  become: true
+  lineinfile:
+    path: /home/{{ rbenv_user }}/.bashrc
+    line: "source /etc/profile.d/rbenv.sh"
+
+
+- name: "{{ rbenv_root }}/versions/{{ rbenv_ruby_version }}/etc"
+  become: true
+  file:
+    state: directory
+    path: "{{ rbenv_root }}/versions/{{ rbenv_ruby_version }}/etc"
+    owner: root
+    group: root
+    mode: 0755
+
+
+- name: "{{ rbenv_root }}/versions/{{ rbenv_ruby_version }}/etc/gemrc"
+  become: true
+  copy:
+    src: gemrc
+    dest: "{{ rbenv_root }}/versions/{{ rbenv_ruby_version }}/etc/gemrc"
+    owner: root
+    group: root
+    mode: 0644
+
+
+- name: "gem install"
+  become: true
+  gem:
+    name: "{{ item }}"
+    user_install: no
+    executable: "{{ rbenv_root }}/shims/gem"
+  with_items: "{{ rbenv_gems }}"

@@ -1,0 +1,66 @@
+version: '2'
+services:
+  db:
+    image: mariadb:10.1
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_DATABASE=${APPNAME}_development
+      - MYSQL_USER=${WEBUSERNAME}
+      - MYSQL_PASSWORD=${WEBUSERNAME}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci --innodb_file_format=BARRACUDA --innodb_large_prefix=1
+    volumes:
+      - data:/var/lib/mysql
+      - ./mnt/db/etc/mysql/my.cnf:/etc/mysql/my.cnf
+
+
+  db-test:
+    image: mariadb:10.1
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_DATABASE="${WEBUSERNAME}"_test
+      - MYSQL_USER=${WEBUSERNAME}
+      - MYSQL_PASSWORD=izMWd*rkDWs6
+    volumes:
+      - data-test:/var/lib/mysql
+      - ./mnt/db/etc/mysql/my.cnf:/etc/mysql/my.cnf
+
+
+  web:
+    image: ${IMGNAME}:0.1
+    user: ${WEBUSERNAME}
+    working_dir: ${ROOT}
+    command: ./bin/docker-web
+    volumes:
+      - ${SYNCVOLUME}:${ROOT}:rw
+
+    depends_on:
+      - db
+      - db-test
+
+  nginx:
+    image: ${IMGNAME}:0.1
+    user: ${WEBUSERNAME}
+    working_dir: /etc/nginx
+    command: sudo nginx -g "daemon off;"
+    volumes:
+      - ${SYNCVOLUME}:${ROOT}:rw
+      - ./repo/${APPNAME}/config/nginx/development/nginx.conf:/etc/nginx/nginx.conf
+      - ./repo/${APPNAME}/config/nginx/development/conf.d:/etc/nginx/conf.d
+      - ./repo/${APPNAME}/config/nginx/development/sites-enabled:/etc/nginx/sites-enabled
+    depends_on:
+      - web
+    ports:
+      - "{{PORT}}:{{PORT}}"
+
+  deploy:
+    image: ${IMGNAME}:0.1
+    user: ${WEBUSERNAME}
+    working_dir: ${ROOT}
+    volumes:
+      - ${SYNCVOLUME}:${ROOT}:rw
+
+volumes:
+  data:
+  data-test:
+  zeroney_web_api_volume:
+    external: true

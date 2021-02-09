@@ -1,0 +1,7 @@
+---
+env_name: {{APPNAME}}
+rbenv_user: {{APPNAME}}
+rbenv_root: /opt/rbenv
+rbenv_ruby_version: {{RUBYVERSION}}
+rbenv_gems:
+  - bundler

@@ -1,0 +1,40 @@
+---
+
+- name: Set up authorized key
+  become: true
+  authorized_key:
+    user: "{{ rbenv_user }}"
+    state: present
+    key: '{{ item }}'
+  with_file:
+    - id_rsa.pub
+
+
+- name: Install ssh key for deploy
+  become: true
+  copy:
+    src: id_rsa
+    dest: /home/{{ rbenv_user }}/.ssh/id_rsa
+    mode: 0600
+    owner: "{{ rbenv_user }}"
+
+- name: Add bitbucket server to known hosts
+  become: true
+  become_user: "{{rbenv_user}}"
+  local_action: shell ssh-keyscan -H bitbucket.org >> ~/.ssh/known_hosts
+
+
+- name: Create application directory
+  become: true
+  file:
+    path: '{{ item }}'
+    state: directory
+    owner: "{{rbenv_user}}"
+    group: "{{rbenv_user}}"
+    mode: 0755
+  with_items:
+    - /var/apps
+    - /var/apps/{{APPNAME}}
+    - /var/apps/nginx
+    - /var/apps/nginx/cache
+    - /var/apps/nginx/cache/tmp

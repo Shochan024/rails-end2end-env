@@ -1,0 +1,42 @@
+---
+- name: Install dependencies
+  become: true
+  apt:
+    state: latest
+    update_cache: yes
+    name:
+      - sudo
+      - mysql-client
+      - libmysqlclient-dev
+      - git
+      - wget
+      - curl
+      - nmap
+      - libssl-dev
+      - libxft-dev
+      - libfreetype6
+      - libfreetype6-dev
+      - libfontconfig1
+      - libfontconfig1-dev
+      - imagemagick
+      - wkhtmltopdf
+      - libmagickwand-dev
+      - zlib1g-dev
+      - libreadline-dev
+      - libyaml-dev
+      - libsqlite3-dev
+      - sqlite3
+      - libxml2-dev
+      - libxslt1-dev
+      - libcurl4-openssl-dev
+      - software-properties-common
+      - libffi-dev
+      - monit
+      - nginx
+      - apt-transport-https
+      - redis-tools
+      - vim
+
+- import_tasks: users.yml
+- import_tasks: web.yml
+- import_tasks: rbenv.yml

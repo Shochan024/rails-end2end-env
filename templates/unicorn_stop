@@ -1,0 +1,3 @@
+#!/bin/bash
+
+kill -QUIT `cat /var/apps/{{APPNAME}}/current/tmp/pids/unicorn.pid`
