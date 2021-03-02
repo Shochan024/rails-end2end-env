@@ -16,8 +16,12 @@ if [ ! -e ../docker-compose.yml ]; then
 
   sed -e "s/{{SYNCVOLUME}}/$SYNCVOLUME/g" ../templates/docker-compose-template.yml > ../docker-compose.yml
   sed -i -e "s^{{PORT}}^$PORT^g"  ../docker-compose.yml
-  sed -e "s/{{APPNAME}}/$APPNAME/g" ../templates/web.yml > ../packer/ansible/roles/common/tasks/web.yml
+  sed -i -e "s^{{WEBUSERNAME}}^$WEBUSERNAME^g"  ../docker-compose.yml
+  sed -i -e "s^{{APPNAME}}^$APPNAME^g"  ../docker-compose.yml
+  sed -i -e "s^{{IMGNAME}}^$IMGNAME^g"  ../docker-compose.yml
+  sed -i -e "s^{{ROOT}}^$ROOT^g"  ../docker-compose.yml
 
+  sed -e "s/{{APPNAME}}/$APPNAME/g" ../templates/web.yml > ../packer/ansible/roles/common/tasks/web.yml
   sed -e "s/{{APPNAME}}/$APPNAME/g" ../templates/docker-sync-template.yml > ../docker-sync.yml
 
   sed -e "s/{{OSVERSION}}/$OSVERSION/g" ../templates/build-development-template.json > ../packer/build-development.json

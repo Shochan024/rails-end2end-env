@@ -1,6 +1,6 @@
 ---
-env_name: zeroney_web_api
-rbenv_user: zeroney_web_api
+env_name: test
+rbenv_user: test
 rbenv_root: /opt/rbenv
 rbenv_ruby_version: 2.7.2
 rbenv_gems:

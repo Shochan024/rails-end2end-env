@@ -40,3 +40,4 @@
 - import_tasks: users.yml
 - import_tasks: web.yml
 - import_tasks: rbenv.yml
+- import_tasks: node.yml
